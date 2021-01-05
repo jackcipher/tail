@@ -1,28 +1,48 @@
 [![Build Status](https://travis-ci.org/hpcloud/tail.svg)](https://travis-ci.org/hpcloud/tail)
 [![Build status](https://ci.appveyor.com/api/projects/status/vrl3paf9md0a7bgk/branch/master?svg=true)](https://ci.appveyor.com/project/Nino-K/tail/branch/master)
 
-# Go package for tail-ing files
+# tail-ing文件的Go包
 
-A Go package striving to emulate the features of the BSD `tail` program. 
+Forked From [https://github.com/hpcloud/tail](https://github.com/hpcloud/tail)
+
+底层实现
+- inotify
+  
+内核2.6以上版本可使用
+
+- poll
+  
+通过轮询实现
+
 
 ```Go
-t, err := tail.TailFile("/var/log/nginx.log", tail.Config{Follow: true})
-for line := range t.Lines {
-    fmt.Println(line.Text)
-}
+filename := "/Users/jack/tail.log"
+
+tails, err := tail.TailFile(filename, tail.Config{
+ReOpen: true,
+Follow: true,
+Location:  &tail.SeekInfo{
+Offset: 0,
+Whence: io.SeekEnd, // 文件尾部
+},
+MustExist: false,
+Poll:      false,
+})
 ```
 
 See [API documentation](http://godoc.org/github.com/hpcloud/tail).
 
-## Log rotation
+## 日志分割
 
-Tail comes with full support for truncation/move detection as it is
-designed to work with log rotation tools.
+支持文件分割/移动检测
+可以很好地配合日志分割程序使用
 
-## Installing
 
-    go get github.com/hpcloud/tail/...
+## 安装
 
-## Windows support
+    go get github.com/jackcipher/tail
 
-This package [needs assistance](https://github.com/hpcloud/tail/labels/Windows) for full Windows support.
+
+## Fork修改内容
+
+检测到iNode节点变更后，重新打开文件，并将游标设置为文件尾部

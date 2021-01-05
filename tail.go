@@ -15,9 +15,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hpcloud/tail/ratelimiter"
-	"github.com/hpcloud/tail/util"
-	"github.com/hpcloud/tail/watch"
+	"github.com/jackcipher/tail/ratelimiter"
+	"github.com/jackcipher/tail/util"
+	"github.com/jackcipher/tail/watch"
 	"gopkg.in/tomb.v1"
 )
 
@@ -358,6 +358,7 @@ func (tail *Tail) waitForChanges() error {
 				return err
 			}
 			tail.Logger.Printf("Successfully reopened %s", tail.Filename)
+			tail.seekEnd()
 			tail.openReader()
 			return nil
 		} else {
